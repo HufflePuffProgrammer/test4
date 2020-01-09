@@ -17,7 +17,8 @@ import Header from "./components/layout/Header";
 import About from "./components/pages/About";
 
 import NotFound from "./components/pages/NotFound";
-import { Provider } from "./context";
+import { Provider } from "react-redux";
+import store from "./store";
 
 class App extends Component {
   componentDidMount() {}
@@ -28,7 +29,7 @@ class App extends Component {
 
   render() {
     return (
-      <Provider>
+      <Provider store={store}>
         <Router basename={process.env.PUBLIC_URL}>
           <div className="App">
             <Header branding="Screenplay Salon" />
