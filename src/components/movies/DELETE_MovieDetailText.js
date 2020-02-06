@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 class MovieDetailText extends Component {
   render() {
     const { title, desc, writer, director, poster } = this.props.movie;
+
     return (
       <div class="container ">
         <div class="row">

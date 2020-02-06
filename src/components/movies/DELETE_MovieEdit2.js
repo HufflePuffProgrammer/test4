@@ -1,22 +1,55 @@
 import React, { Component } from "react";
 import TextInputGroup from "../layout/TextInputGroup";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { addMovie } from "../../actions/movieActions";
-import PropTypes from "prop-types";
+import { getMovie, updateMovie } from "../../actions/movieActions";
 
-class MovieAdd extends Component {
+class MovieEdit extends Component {
   state = {
+    id: "",
     title: "",
-    director: "",
     writer: "",
+    director: "",
+    poster: "",
     desc: "",
     errors: {}
   };
 
+  componentWillReceiveProps(nextProps, nextState) {
+    const { title, writer, director, poster, desc } = nextProps.movie;
+    this.setState({
+      title,
+      writer,
+      director,
+      poster,
+      desc
+    });
+  }
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    this.props.getMovie(id);
+  }
+  // async componentDidMount() {
+  //   const { id } = this.props.match.params;
+  //   const res = await axios.get(
+  //     `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
+  //   );
+
+  //   const movie = res.data;
+
+  //   this.setState({
+  //     title: movie.title,
+  //     desc: movie.desc,
+  //     writer: movie.writer,
+  //     director: movie.director,
+  //     poster: movie.poster
+  //   });
+  // }
+
   onSubmit = e => {
     e.preventDefault();
-    const { title, director, writer, desc, poster } = this.state;
+    const { title, desc, writer, director, poster, errors } = this.state;
 
     //Check for Errors
     if (title === "") {
@@ -32,48 +65,75 @@ class MovieAdd extends Component {
       return;
     }
     if (poster === "") {
-      this.setState({ errors: { writer: "Poster is required" } });
+      this.setState({ errors: { poster: "Poster is required" } });
       return;
     }
     if (desc === "") {
       this.setState({ errors: { desc: "Description is required" } });
       return;
     }
-    const newMovie = {
+
+    const { id } = this.props.match.params;
+
+    const updMovie = {
+      id,
       title,
-      director,
+      desc,
       writer,
-      poster,
-      desc
+      director,
+      poster
     };
-    this.props.addMovie(newMovie);
+    this.props.updateMovie(updMovie);
+
+    // try {
+    //   // Implement DB
+    //   const res = await axios.put(
+    //     `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`,
+    //     updMovie
+    //   );
+    //   dispatch({ type: "UPDATE_MOVIE", payload: res.data });
+    // } catch (e) {
+    //   dispatch({ type: "UPDATE_MOVIE", payload: updMovie });
+    // }
 
     //clear fields
     this.setState({
       title: "",
-      director: "",
-      writer: "",
-      poster: "",
       desc: "",
+      writer: "",
+      director: "",
+      poster: "",
       errors: {}
     });
-
-    this.props.history.push("/");
+    this.props.history.push(`/movie/detail/${id}`);
+    // this.props.history.push("/");
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { title, desc, writer, director, poster, errors } = this.state;
+    const { title, director, writer, desc, poster, errors } = this.state;
 
     return (
+      // BUG when I try to remove the first item of the array.
+      // Then access the object's properties. It's undefined.
+      // Please fix.
+      // const moviesFromDB = movies.filter(movie => movie.id === 1);
+      // const myMovie = moviesFromDB.shift();
+      // console.log("Movie from DB after shift()");
+      // console.log(myMovie);
+      // console.log(myMovie.title);
+      //const movie = moviesFromDB[0];
+      // console.log("movie");
+      // console.log(movie);
+
       <div>
         <header id="main-header" class="py-1 bg-warning text-white">
           <div class="container">
             <div class="row">
               <div class="col-md-6">
                 <h4>
-                  <i class="fas fa-film"></i> Movies
+                  <i class="fas fa-film"></i> Movies Edit
                 </h4>
               </div>
             </div>
@@ -81,12 +141,14 @@ class MovieAdd extends Component {
         </header>
 
         <section id="movie">
+          {" "}
           <div class="container">
+            {" "}
             <div class="row">
               <div class="col">
                 <div class="card">
                   <div class="card-body">
-                    <form onSubmit={this.onSubmit}>
+                    <form onSubmit={this.onSubmit.bind(this)}>
                       <TextInputGroup
                         type="text"
                         name="title"
@@ -97,6 +159,7 @@ class MovieAdd extends Component {
                         error={errors.title}
                       />
                       <TextInputGroup
+                        type="text"
                         name="director"
                         label="Director"
                         value={director}
@@ -105,6 +168,7 @@ class MovieAdd extends Component {
                         error={errors.director}
                       />
                       <TextInputGroup
+                        type="text"
                         name="writer"
                         label="Writer"
                         value={writer}
@@ -113,28 +177,28 @@ class MovieAdd extends Component {
                         error={errors.writer}
                       />
                       <TextInputGroup
+                        type="text"
                         name="poster"
                         label="Poster"
                         value={poster}
-                        placeHolder="http://www.xxx.com"
+                        placeHolder="http://www.abc.com"
                         onChange={this.onChange}
                         error={errors.poster}
                       />
-
                       <TextInputGroup
                         type="text"
                         name="desc"
-                        label="Description"
                         value={desc}
+                        label="Description"
                         placeHolder="Enter a Description"
                         onChange={this.onChange}
                         error={errors.desc}
                       />
-                      <section id="actions" class="py-1 mb-1 bg-light">
+                      <section id="actions" class="py-4 mb-4 bg-light">
                         <div class="container">
                           <div class="row">
                             <div class="col-md-3">
-                              <Link to="/" className="btn btn-light btn-block">
+                              <Link to="/" class="btn btn-light btn-block">
                                 <i class="fas fa-arrow-left"></i>Back
                               </Link>
                             </div>
@@ -158,9 +222,11 @@ class MovieAdd extends Component {
     );
   }
 }
-
-MovieAdd.propTypes = {
-  addMovie: PropTypes.func.isRequired
+MovieEdit.propTypes = {
+  movie: PropTypes.object.isRequired,
+  getMovie: PropTypes.func.isRequired
 };
-
-export default connect(null, { addMovie })(MovieAdd);
+const mapStateToProps = state => ({
+  movie: state.movie.movie
+});
+export default connect(mapStateToProps, { getMovie, updateMovie })(MovieEdit);

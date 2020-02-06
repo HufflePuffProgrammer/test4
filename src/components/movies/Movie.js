@@ -1,72 +1,58 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Consumer } from "../../context";
-import CommentPerMovie from "../comments/CommentPerMovie";
-import axios from "axios";
+import { connect } from "react-redux";
+import { getCommentsPerMovie } from "../../actions/commentActions";
 
 class Movie extends Component {
-  onDeleteClick = async (id, dispatch) => {
-    try {
-      await axios.delete(
-        `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
-      );
-      dispatch({ type: "DELETE_MOVIE", payload: id });
-    } catch (e) {
-      dispatch({ type: "DELETE_MOVIE", payload: id });
-    }
+  state = {
+    comments: []
   };
 
   render() {
     const { id, title, desc, writer, director, poster } = this.props.movie;
-
     return (
-      <Consumer>
-        {value => {
-          const { comments } = value;
-          const firstCommentPerMovie = comments.filter(
-            comment => comment.movieid === id
-          );
+      <tr>
+        <td>
+          <Link to={`movie/detail/${id}`}>
+            <img src={poster} alt={title} className="img-thumbnail"></img>
+          </Link>
+        </td>
+        <td>
+          <div className="row">
+            <h4>
+              {" "}
+              <Link to={`movie/detail/${id}`}>{title}</Link>
+            </h4>
+          </div>
+          <div className="row">
+            <strong>Dir: </strong> {director}
+          </div>
+          <div className="row">
+            <strong>Writer: </strong> {writer}
+          </div>
+          <div className="row">
+            <strong>Summary: </strong> {desc}
+          </div>
 
-          return (
-            <tr>
-              <td>
-                <Link to={`movie/detail/${id}`}>
-                  <img src={poster} alt={title} class="img-thumbnail"></img>
-                </Link>
-              </td>
-              <td>
-                <div class="row">
-                  <h4>
-                    {" "}
-                    <Link to={`movie/detail/${id}`}>{title}</Link>
-                  </h4>
-                </div>
-                <div class="row">
-                  <text class="mr-1 font-weight-bold">Dir: </text> {director}
-                </div>
-                <div class="row">
-                  <text class="mr-1 font-weight-bold">Writer: </text> {writer}
-                </div>
-                <div class="row">
-                  <text class="mr-1 font-weight-bold">Summary: </text> {desc}
-                </div>
-              </td>
-              <td>
-                <table class="table">
-                  {firstCommentPerMovie.slice(0, 1).map(comment => (
-                    <CommentPerMovie key={id} movieid={id} comment={comment} />
-                  ))}
-                </table>
-              </td>
-            </tr>
-          );
-        }}
-      </Consumer>
+          <div className="row">
+            <Link to={`comments/commentspermovie/${id}`}>Comments</Link>
+          </div>
+        </td>
+      </tr>
     );
   }
 }
+
 Movie.propTypes = {
-  movie: PropTypes.object.isRequired
+  movie: PropTypes.object.isRequired,
+  getCommentsPerMovie: PropTypes.func.isRequired,
+  comments: PropTypes.array.isRequired
+  //commentsFiltered: PropTypes.array.isRequired
 };
-export default Movie;
+const mapStateToProps = state => ({
+  comments: state.comment.comments
+  //commentsFiltered: state.comment.commentsFiltered
+});
+
+export default connect(mapStateToProps, { getCommentsPerMovie })(Movie);

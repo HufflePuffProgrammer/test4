@@ -1,61 +1,71 @@
 import React, { Component } from "react";
 import Movie from "./Movie";
-import { Consumer } from "../../context";
+import Loading from "../layout/Loading";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { getMovies } from "../../actions/movieActions";
 
 class Movies extends Component {
+  componentDidMount() {
+    this.props.getMovies();
+  }
+
   render() {
-    return (
-      <Consumer>
-        {value => {
-          const { movies } = value;
-
-          return (
-            <React.Fragment>
-              <section id="search" class="py-2 mb-2 bg-light">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-md-3">
-                      <Link
-                        to="/movie/add"
-                        className="btn btn-primary btn-block"
-                      >
-                        <i class="fas fa-plus"></i> Add Movie
-                      </Link>
-                    </div>
-                    <div className="col-md-3">
-                      <Link to="/search" className="btn btn-success btn-block">
-                        <i className="fas fa-search"></i>Search
-                      </Link>
-                    </div>
-                  </div>
+    const { movies } = this.props;
+    if (movies) {
+      return (
+        <React.Fragment>
+          <section id="search" className="py-2 mb-2 bg-light">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-3">
+                  <Link to="/movie/add" className="btn btn-primary btn-block">
+                    <i className="fas fa-plus"></i> Add Movie
+                  </Link>
                 </div>
-              </section>
-
-              <div class="container">
-                <div class="row">
-                  <div class="col md-9">
-                    <table class="table table-striped">
-                      <thead class="thead-dark">
-                        <th width="20%">Poster</th>
-                        <th width="40%">Movie</th>
-                        <th width="40%">Comments</th>
-                      </thead>
-                      <tbody>
-                        {movies.map(movie => (
-                          <Movie key={movie.id} movie={movie} />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                <div className="col-md-3">
+                  <Link to="/search" className="btn btn-success btn-block">
+                    <i className="fas fa-search"></i>Search
+                  </Link>
                 </div>
               </div>
-            </React.Fragment>
-          );
-        }}
-      </Consumer>
-    );
+            </div>
+          </section>
+
+          <div className="container">
+            <div className="row">
+              <div className="col md-9">
+                <table className="table table-striped">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th width="20%">Poster</th>
+                      <th width="80%">Movie</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {movies.map(movie => (
+                      <Movie key={movie.id} movieid={movie.id} movie={movie} />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    } else {
+      return <Loading />;
+    }
   }
 }
 
-export default Movies;
+Movies.propTypes = {
+  movies: PropTypes.array.isRequired,
+  getMovies: PropTypes.func.isRequired
+};
+const mapStateToProps = state => ({
+  movies: state.movie.movies
+});
+
+export default connect(mapStateToProps, { getMovies })(Movies);

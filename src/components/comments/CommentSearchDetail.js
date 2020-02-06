@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Consumer } from "../../context";
-import MovieSearchDetail from "../movies/MovieSearchDetail";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 class CommentSearchDetail extends Component {
   commentGenreText = commentText => {
@@ -12,7 +11,7 @@ class CommentSearchDetail extends Component {
       fool_triumphant,
       buddy_love,
       institutionalized
-    } = commentText;
+    } = commentText.checkboxes;
     let genreString = "";
 
     if (superhero) {
@@ -45,7 +44,7 @@ class CommentSearchDetail extends Component {
       character_good,
       dialogue_good,
       premise_good
-    } = commentText;
+    } = commentText.checkboxes;
     let charsGoodString = "";
 
     if (opening_good) {
@@ -72,7 +71,7 @@ class CommentSearchDetail extends Component {
       character_poor,
       dialogue_poor,
       premise_poor
-    } = commentText;
+    } = commentText.checkboxes;
     let charsPoorString = "";
 
     if (opening_poor) {
@@ -100,50 +99,46 @@ class CommentSearchDetail extends Component {
   };
 
   render() {
+    const { comment, movieid } = this.props;
+    const { title } = comment;
+
     return (
-      <Consumer>
-        {value => {
-          const { comment, movieid } = this.props;
-          const { title } = comment;
+      <tbody>
+        <tr>
+          <td>
+            <div className="row">
+              <div className="col">
+                <strong>{title}</strong> User: <small>12/26/2019</small>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <small className="text-muted">Genre: </small>
+                {this.commentGenreText(comment)}
+              </div>
+            </div>
 
-          return (
-            <React.Fragment>
-              <tr>
-                <td>
-                  <div class="row">
-                    <div class="col">
-                      <strong>{title}</strong> User: <small>12/26/2019</small>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <small class="text-muted">Genre: </small>
-                      {this.commentGenreText(comment)}
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col">
-                      <small class="mr-1 text-muted">Good:</small>{" "}
-                      {this.commentCharsGoodText(comment)}{" "}
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <small class="mr-1 text-muted">Poor:</small>{" "}
-                      {this.commentCharsPoorText(comment)}
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col">{this.commentText(comment)}</div>
-                  </div>
-                </td>
-                <MovieSearchDetail key={movieid} movieid={movieid} />
-              </tr>
-            </React.Fragment>
-          );
-        }}
-      </Consumer>
+            <div className="row">
+              <div className="col">
+                <small className="mr-1 text-muted">Good:</small>{" "}
+                {this.commentCharsGoodText(comment)}{" "}
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <small className="mr-1 text-muted">Poor:</small>{" "}
+                {this.commentCharsPoorText(comment)}
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">{this.commentText(comment)}</div>
+            </div>
+          </td>
+          <div className="row">
+            <Link to={`movie/detail/${movieid}`}>Movie</Link>
+          </div>
+        </tr>
+      </tbody>
     );
   }
 }

@@ -1,79 +1,77 @@
 import React, { Component } from "react";
 import TextInputGroup from "../layout/TextInputGroup";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { addMovie } from "../../actions/movieActions";
-import PropTypes from "prop-types";
+import { getContact, updateContact } from "../../actions/contactActions";
 
-class MovieAdd extends Component {
+class ContactEdit extends Component {
   state = {
+    id: "",
     title: "",
-    director: "",
     writer: "",
-    desc: "",
+
     errors: {}
   };
 
   onSubmit = e => {
     e.preventDefault();
-    const { title, director, writer, desc, poster } = this.state;
+    const { title, writer, errors } = this.state;
 
     //Check for Errors
     if (title === "") {
       this.setState({ errors: { title: "Title is required" } });
       return;
     }
-    if (director === "") {
-      this.setState({ errors: { director: "Director is required" } });
-      return;
-    }
     if (writer === "") {
       this.setState({ errors: { writer: "Writer is required" } });
       return;
     }
-    if (poster === "") {
-      this.setState({ errors: { writer: "Poster is required" } });
-      return;
-    }
-    if (desc === "") {
-      this.setState({ errors: { desc: "Description is required" } });
-      return;
-    }
-    const newMovie = {
+    const { id } = this.props.match.params;
+
+    const updContact = {
+      id,
       title,
-      director,
-      writer,
-      poster,
-      desc
+      writer
     };
-    this.props.addMovie(newMovie);
+    this.props.updateContact(updContact);
 
     //clear fields
     this.setState({
       title: "",
-      director: "",
       writer: "",
-      poster: "",
-      desc: "",
+
       errors: {}
     });
-
-    this.props.history.push("/");
+    //this.props.history.push(`/movie/detail/${id}`);
+    this.props.history.push("/contacts");
   };
 
   onChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { title, desc, writer, director, poster, errors } = this.state;
+    const { title, writer, errors } = this.state;
 
     return (
+      // BUG when I try to remove the first item of the array.
+      // Then access the object's properties. It's undefined.
+      // Please fix.
+      // const moviesFromDB = movies.filter(movie => movie.id === 1);
+      // const myMovie = moviesFromDB.shift();
+      // console.log("Movie from DB after shift()");
+      // console.log(myMovie);
+      // console.log(myMovie.title);
+      //const movie = moviesFromDB[0];
+      // console.log("movie");
+      // console.log(movie);
+
       <div>
         <header id="main-header" class="py-1 bg-warning text-white">
           <div class="container">
             <div class="row">
               <div class="col-md-6">
                 <h4>
-                  <i class="fas fa-film"></i> Movies
+                  <i class="fas fa-film"></i> Contact Edit
                 </h4>
               </div>
             </div>
@@ -81,12 +79,14 @@ class MovieAdd extends Component {
         </header>
 
         <section id="movie">
+          {" "}
           <div class="container">
+            {" "}
             <div class="row">
               <div class="col">
                 <div class="card">
                   <div class="card-body">
-                    <form onSubmit={this.onSubmit}>
+                    <form onSubmit={this.onSubmit.bind(this)}>
                       <TextInputGroup
                         type="text"
                         name="title"
@@ -97,14 +97,7 @@ class MovieAdd extends Component {
                         error={errors.title}
                       />
                       <TextInputGroup
-                        name="director"
-                        label="Director"
-                        value={director}
-                        placeHolder="Enter the Director"
-                        onChange={this.onChange}
-                        error={errors.director}
-                      />
-                      <TextInputGroup
+                        type="text"
                         name="writer"
                         label="Writer"
                         value={writer}
@@ -112,29 +105,14 @@ class MovieAdd extends Component {
                         onChange={this.onChange}
                         error={errors.writer}
                       />
-                      <TextInputGroup
-                        name="poster"
-                        label="Poster"
-                        value={poster}
-                        placeHolder="http://www.xxx.com"
-                        onChange={this.onChange}
-                        error={errors.poster}
-                      />
-
-                      <TextInputGroup
-                        type="text"
-                        name="desc"
-                        label="Description"
-                        value={desc}
-                        placeHolder="Enter a Description"
-                        onChange={this.onChange}
-                        error={errors.desc}
-                      />
-                      <section id="actions" class="py-1 mb-1 bg-light">
+                      <section id="actions" class="py-4 mb-4 bg-light">
                         <div class="container">
                           <div class="row">
                             <div class="col-md-3">
-                              <Link to="/" className="btn btn-light btn-block">
+                              <Link
+                                to="/contacts"
+                                class="btn btn-light btn-block"
+                              >
                                 <i class="fas fa-arrow-left"></i>Back
                               </Link>
                             </div>
@@ -159,8 +137,4 @@ class MovieAdd extends Component {
   }
 }
 
-MovieAdd.propTypes = {
-  addMovie: PropTypes.func.isRequired
-};
-
-export default connect(null, { addMovie })(MovieAdd);
+export default ContactEdit;

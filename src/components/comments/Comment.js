@@ -1,26 +1,20 @@
 import React, { Component } from "react";
-import { Consumer } from "../../context";
+
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import axios from "axios";
+import { connect } from "react-redux";
+import { deleteComment } from "../../actions/commentActions";
+import Loading from "../layout/Loading";
 
 class Comment extends Component {
-  onDeleteClick = async (id, dispatch) => {
-    try {
-      await axios.delete(
-        `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
-      );
-      dispatch({ type: "DELETE_COMMENT", payload: id });
-    } catch (e) {
-      dispatch({ type: "DELETE_COMMENT", payload: id });
-    }
+  onDeleteClick = id => {
+    this.props.deleteComment(id);
   };
   commentGenreText = commentText => {
     const {
       superhero,
       dude_with_a_problem,
       golden_fleece,
-      fool_triumphant,
       buddy_love,
       institutionalized
     } = commentText;
@@ -34,9 +28,6 @@ class Comment extends Component {
     }
     if (golden_fleece) {
       genreString = genreString + "Golden Fleece, ";
-    }
-    if (fool_triumphant) {
-      genreString = genreString + "Fool Triumphant, ";
     }
     if (buddy_love) {
       genreString = genreString + "Buddy Love, ";
@@ -106,69 +97,71 @@ class Comment extends Component {
 
   commentText = commentText => {
     const { comment_text } = commentText;
-
     return comment_text;
   };
 
   render() {
-    return (
-      <Consumer>
-        {value => {
-          const { dispatch } = value;
-          const { comment } = this.props;
-          const { title, user, id } = comment;
-          return (
-            <React.Fragment>
-              <tr>
-                <td>
-                  <div class="d-flex">
-                    <div class="mr-auto p-0 item-hl">
-                      <strong>
-                        <Link to={`/comments/view/${id}`}>{title}</Link>
-                      </strong>{" "}
-                      User: {user}
-                      <small> 12/26/2019</small>
-                    </div>
-                    <div class="p-1 item-hl">
-                      <Link
-                        to={`/comments/edit/${id}`}
-                        className="btn btn-warning btn-block"
-                      >
-                        <i className="fas fa-pencil-alt"></i>Edit
-                      </Link>
-                    </div>
-                    <div class="p-1 item-hl">
-                      <Link
-                        to="#"
-                        className="btn btn-danger btn-block"
-                        onClick={this.onDeleteClick.bind(this, id, dispatch)}
-                      >
-                        <i className="far fa-trash-alt"></i>Delete
-                      </Link>
-                    </div>
-                  </div>
+    const { comment } = this.props;
 
-                  <div>
-                    <strong>Genres</strong> {this.commentGenreText(comment)}
-                  </div>
-                  <div>
-                    <strong>Good </strong> {this.commentCharsGoodText(comment)}{" "}
-                  </div>
-                  <div>
-                    <strong>Poor</strong> {this.commentCharsPoorText(comment)}
-                  </div>
-                  <div>{this.commentText(comment)}</div>
-                </td>
-              </tr>
-            </React.Fragment>
-          );
-        }}
-      </Consumer>
-    );
+    if (comment) {
+      const { id, title, user, checkboxes } = this.props.commentProps;
+      const { commentProps } = this.props;
+      return (
+        <tbody>
+          <tr>
+            <td>
+              <div className="d-flex">
+                <div className="mr-auto p-0 item-hl">
+                  <strong>
+                    <Link to={`/comments/view/${id}`}>{title}</Link>
+                  </strong>{" "}
+                  User: {user}
+                  <small> 12/26/2019</small>
+                </div>
+                <div className="p-1 item-hl">
+                  <Link
+                    to={`/comments/edit/${id}`}
+                    className="btn btn-warning btn-block"
+                  >
+                    <i className="fas fa-pencil-alt"></i>Edit
+                  </Link>
+                </div>
+                <div className="p-1 item-hl">
+                  <Link
+                    to="#"
+                    className="btn btn-danger btn-block"
+                    onClick={this.onDeleteClick.bind(this, id)}
+                  >
+                    <i className="far fa-trash-alt"></i>Delete
+                  </Link>
+                </div>
+              </div>
+              <div>
+                <strong>Genres</strong> {this.commentGenreText(checkboxes)}
+              </div>
+              <div>
+                <strong>Good </strong> {this.commentCharsGoodText(checkboxes)}
+              </div>
+              <div>
+                <strong>Poor</strong> {this.commentCharsPoorText(checkboxes)}
+              </div>
+              <div>{this.commentText(commentProps)}</div>
+            </td>
+          </tr>
+        </tbody>
+      );
+    } else {
+      return <Loading />;
+    }
   }
 }
 
 Comment.propTypes = {
   comment: PropTypes.object.isRequired
 };
-export default Comment;
+
+const mapStateToProps = state => ({
+  comment: state.comment.comment
+});
+
+export default connect(mapStateToProps, { deleteComment })(Comment);

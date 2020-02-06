@@ -4,23 +4,37 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import TextInputGroup from "../layout/TextInputGroup";
 import { Link } from "react-router-dom";
-import {
-  getComment,
-  updateComment,
-  deleteComment
-} from "../../actions/commentActions";
+import { updateComment, deleteComment } from "../../actions/commentActions";
 
 class CommentEdit extends Component {
   constructor(props) {
     super(props);
 
+    let listCheckboxes = [];
+
+    listCheckboxes["opening_good"] = false;
+    listCheckboxes["premise_good"] = false;
+    listCheckboxes["character_good"] = false;
+    listCheckboxes["dialogue_good"] = false;
+
+    listCheckboxes["opening_poor"] = false;
+    listCheckboxes["premise_poor"] = false;
+    listCheckboxes["character_poor"] = false;
+    listCheckboxes["dialogue_poor"] = false;
+
+    listCheckboxes["dude_with_a_problem"] = false;
+    listCheckboxes["golden_fleece"] = false;
+    listCheckboxes["buddy_love"] = false;
+    listCheckboxes["institutionalized"] = false;
+    listCheckboxes["superhero"] = false;
+
     this.state = {
-      id: "",
-      movieid: "",
+      id: 0,
+      movieid: 0,
       title: "",
       user: "",
-      comment_text: "",
-      checkboxes: {},
+      commentText: "",
+      checkboxes: listCheckboxes,
       errors: {}
     };
     this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
@@ -28,36 +42,27 @@ class CommentEdit extends Component {
 
   //Delete from CommentEdit page.
   onDeleteClick = id => {
-    this.props.deleteComment(id);
-    this.props.history.push(`/comments/commentspermovie/${this.state.movieid}`);
-  };
-  UNSAFE_componentWillReceiveProps(nextProps, nextState) {
-    const {
-      id,
-      movieid,
-      title,
-      user,
-      comment_text,
-      checkboxes
-    } = nextProps.comment;
+    // try {
+    //   await axios.delete(
+    //     `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
+    //   );
+    //   dispatch({ type: "DELETE_COMMENT", payload: id });
+    // } catch (e) {
+    //   dispatch({ type: "DELETE_COMMENT", payload: id });
+    // }
 
-    this.setState({
-      id,
-      movieid,
-      title,
-      user,
-      comment_text,
-      checkboxes
-    });
-  }
+    this.props.history.push(`/comments/${this.state.movieid}`);
+  };
+
   componentDidMount() {
-    const { id } = this.props.match.params;
-    this.props.getComment(id);
+    const { comment } = this.props;
+    console.log("Component Edit");
+    console.log(this.props.comment);
   }
 
   onSubmit = e => {
     e.preventDefault();
-    const { id, comment_text, checkboxes, movieid, user, title } = this.state;
+    const { id, commentText, checkboxes, movieid, user, title } = this.state;
 
     //Check for Errors
     if (title === "") {
@@ -68,7 +73,7 @@ class CommentEdit extends Component {
       this.setState({ errors: { user: "User is required" } });
       return;
     }
-    if (comment_text === "") {
+    if (commentText === "") {
       this.setState({ errors: { comment_text: "Comment is required" } });
       return;
     }
@@ -76,10 +81,9 @@ class CommentEdit extends Component {
     const updComment = {
       id,
       movieid,
-      comment_text,
+      comment_text: commentText,
       title,
       user,
-      checkboxes,
       opening_poor: checkboxes["opening_poor"],
       premise_poor: checkboxes["premise_poor"],
       character_poor: checkboxes["character_poor"],
@@ -96,24 +100,30 @@ class CommentEdit extends Component {
       institutionalized: checkboxes["institutionalized"],
       superhero: checkboxes["superhero"]
     };
+    // const { id } = this.props.match.params;
+    // const res = await axios.put(
+    //   `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/comments/${id}`,
+    //   updComment
+    // );
 
+    //dispatch({ type: "UPDATE_COMMENT", payload: updComment });
     this.props.updateComment(updComment);
     //Clear fields
-
     this.setState({
       id,
       movieid,
       title,
       user,
-      comment_text,
+      commentText,
       checkboxes: [],
       errors: {}
     });
-    this.props.history.push(`/comments/commentspermovie/${movieid}`);
+    this.props.history.push(`/comments/${movieid}`);
   };
 
   handleCheckboxChange(event) {
     const { name } = event.target;
+
     this.setState(prevState => ({
       checkboxes: {
         ...prevState.checkboxes,
@@ -135,7 +145,7 @@ class CommentEdit extends Component {
   createPoorCheckboxes = () => {
     const { checkboxes } = this.state;
     return (
-      <div className="col-sm-4">
+      <div class="col-sm-4">
         <div>
           <h6>
             <strong>Poor Points</strong>
@@ -175,7 +185,7 @@ class CommentEdit extends Component {
   createGoodCheckboxes = () => {
     const { checkboxes } = this.state;
     return (
-      <div className="col-sm-4">
+      <div class="col-sm-4">
         <div>
           <h6>
             <strong>Good Points</strong>
@@ -216,7 +226,7 @@ class CommentEdit extends Component {
   createGenreCheckboxes = () => {
     const { checkboxes } = this.state;
     return (
-      <div className="col-sm-4">
+      <div class="col-sm-4">
         <div>
           <h6>
             <strong>Genres</strong>
@@ -261,35 +271,36 @@ class CommentEdit extends Component {
     );
   };
   onChange = e => this.setState({ [e.target.name]: e.target.value });
-
   render() {
-    const { title, comment_text, user, checkboxes, id } = this.state;
-    const { errors } = this.state;
+    var { title, commentText, user, errors, id } = this.state;
+    console.log("Title from state");
+    console.log(title);
 
     return (
       <div>
-        <header id="main-header" className="py-2 bg-warning text-white">
-          <div className="container">
-            <div className="row">
-              <div className="col-md-6">
+        <header id="main-header" class="py-2 bg-warning text-white">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
                 <h1>
-                  <i className="far fa-comments"></i> Comment Edit
+                  <i class="far fa-comments"></i> Comment Edit
                 </h1>
               </div>
             </div>
           </div>
         </header>
 
-        <div className="container">
-          <div className="row">
-            <div className="col">
-              <div className="card">
-                <div className="card-body">
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
                   <form onSubmit={this.onSubmit.bind(this)}>
-                    <div className="row">
-                      {checkboxes ? this.createGenreCheckboxes() : null}
-                      {checkboxes ? this.createPoorCheckboxes() : null}
-                      {checkboxes ? this.createGoodCheckboxes() : null}
+                    <div class="row">
+                      {this.createGoodCheckboxes()}
+                      {this.createPoorCheckboxes()}
+                      {this.createGenreCheckboxes()}
+
                       <button
                         type="button"
                         className="btn btn-outline-primary mr-2"
@@ -306,10 +317,10 @@ class CommentEdit extends Component {
                         Deselect All
                       </button>
                     </div>
-                    <div className="row mt-4"></div>
+                    <div class="row mt-4"></div>
 
-                    <div className="row">
-                      <div className="col-sm-12">
+                    <div class="row">
+                      <div class="col-sm-12">
                         <TextInputGroup
                           type="text"
                           name="title"
@@ -321,8 +332,8 @@ class CommentEdit extends Component {
                         />
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-sm-12">
+                    <div class="row">
+                      <div class="col-sm-12">
                         <TextInputGroup
                           type="text"
                           name="user"
@@ -334,35 +345,35 @@ class CommentEdit extends Component {
                         />
                       </div>
                     </div>
-                    <div className="row">
-                      <div className="col-sm-12">
+                    <div class="row">
+                      <div class="col-sm-12">
                         <TextInputGroup
                           type="text"
-                          name="comment_text"
+                          name="commentText"
                           label="Comment"
-                          value={comment_text}
+                          value={commentText}
                           placeHolder="Enter a comment"
                           onChange={this.onChange}
                           error={errors.comment_text}
                         />
                       </div>
                     </div>
-                    <section id="actions" className="py-4 mb-4 bg-light">
-                      <div className="container">
-                        <div className="row">
-                          <div className="col-md-3">
+                    <section id="actions" class="py-4 mb-4 bg-light">
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-3">
                             <Link to="/" className="btn btn-light btn-block">
-                              <i className="fas fa-arrow-left"></i>Back
+                              <i class="fas fa-arrow-left"></i>Back
                             </Link>
                           </div>
-                          <div className="col-md-3">
+                          <div class="col-md-3">
                             <input
-                              className="btn btn-warning btn-block"
+                              class="btn btn-warning btn-block"
                               type="submit"
                             />
                           </div>
 
-                          <div className="col-md-3">
+                          <div class="col-md-3">
                             <Link
                               to="#"
                               className="btn btn-danger btn-block"
@@ -387,7 +398,6 @@ class CommentEdit extends Component {
 
 CommentEdit.propTypes = {
   comment: PropTypes.object.isRequired,
-  getComment: PropTypes.func.isRequired,
   updateComment: PropTypes.func.isRequired,
   deleteComment: PropTypes.func.isRequired
 };
@@ -397,7 +407,6 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, {
-  getComment,
   updateComment,
   deleteComment
 })(CommentEdit);

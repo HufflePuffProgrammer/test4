@@ -1,0 +1,15 @@
+export const GET_MOVIES = "GET_MOVIES";
+export const GET_MOVIE = "GET_MOVIE";
+export const UPDATE_MOVIE = "UPDATE_MOVIE";
+export const ADD_MOVIE = "ADD_MOVIE";
+export const DELETE_MOVIE = "DELETE_MOVIE";
+export const GET_COMMENTS_PER_MOVIE = "GET_COMMENTS_PER_MOVIE";
+export const GET_COMMENTS_ALL = "GET_COMMENT_ALL";
+export const GET_COMMENT = "GET_COMMENT";
+export const DELETE_COMMENT = "DELETE_COMMENT";
+export const ADD_COMMENT = "ADD_COMMENT";
+export const UPDATE_COMMENT = "UPDATE_COMMENT";
+
+export const GET_CONTACTS = "GET_CONTACTS";
+export const GET_CONTACT = "GET_CONTACT";
+export const UPDATE_CONTACT = "UPDATE_CONTACT";

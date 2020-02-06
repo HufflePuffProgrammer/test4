@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
-import contactReducer from "./contactReducer";
+import movieReducer from "./movieReducer";
+import commentReducer from "./commentReducer";
 
 export default combineReducers({
-  contact: contactReducer
+  movie: movieReducer,
+  comment: commentReducer
 });

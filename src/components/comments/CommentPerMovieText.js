@@ -88,7 +88,6 @@ class CommentPerMovieText extends Component {
 
   commentText = commentText => {
     const { comment_text } = commentText;
-
     return comment_text;
   };
 

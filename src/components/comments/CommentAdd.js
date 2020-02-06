@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { Consumer } from "../../context";
 import Checkbox from "../checkboxes/Checkbox";
 import uuid from "uuid";
-import axios from "axios";
+import { addComment } from "../../actions/commentActions";
 import TextInputGroup from "../layout/TextInputGroup";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
 
 class CommentAdd extends Component {
   constructor(props) {
@@ -32,6 +33,7 @@ class CommentAdd extends Component {
     listCheckboxes["character_good"] = false;
     listCheckboxes["dialogue_good"] = false;
 
+    listCheckboxes["superhero"] = false;
     listCheckboxes["dude_with_a_problem"] = false;
     listCheckboxes["golden_fleece"] = false;
     listCheckboxes["buddy_love"] = false;
@@ -47,10 +49,13 @@ class CommentAdd extends Component {
       //isSelectedBox: false
     });
   }
-  onSubmit = async (dispatch, e) => {
+  onSubmit = async e => {
     e.preventDefault();
     const { commentText, checkboxes, movieid, user, title } = this.state;
-
+    console.log("commentText");
+    console.log(commentText);
+    console.log("checkboxes");
+    console.log(checkboxes);
     //Check for Errors
     if (title === "") {
       this.setState({ errors: { title: "Title is required" } });
@@ -71,43 +76,34 @@ class CommentAdd extends Component {
       comment_text: commentText,
       title,
       user,
+      checkboxes
+      // opening_poor: checkboxes["opening_poor"],
+      // premise_poor: checkboxes["premise_poor"],
+      // character_poor: checkboxes["character_poor"],
+      // dialogue_poor: checkboxes["dialogue_poor"],
 
-      opening_poor: checkboxes["opening_poor"],
-      premise_poor: checkboxes["premise_poor"],
-      character_poor: checkboxes["character_poor"],
-      dialogue_poor: checkboxes["dialogue_poor"],
+      // opening_good: checkboxes["opening_good"],
+      // premise_good: checkboxes["premise_good"],
+      // character_good: checkboxes["character_good"],
+      // dialogue_good: checkboxes["dialogue_good"],
 
-      opening_good: checkboxes["opening_good"],
-      premise_good: checkboxes["premise_good"],
-      character_good: checkboxes["character_good"],
-      dialogue_good: checkboxes["dialogue_good"],
-
-      dude_with_a_problem: checkboxes["dude_with_a_problem"],
-      golden_fleece: checkboxes["golden_fleece"],
-      buddy_love: checkboxes["buddy_love"],
-      institutionalized: checkboxes["institutionalized"],
-      superhero: checkboxes["superhero"]
+      // dude_with_a_problem: checkboxes["dude_with_a_problem"],
+      // golden_fleece: checkboxes["golden_fleece"],
+      // buddy_love: checkboxes["buddy_love"],
+      // institutionalized: checkboxes["institutionalized"],
+      // superhero: checkboxes["superhero"]
     };
 
-    try {
-      const res = await axios.post(
-        "https://jsonplaceholder.typicode.com/users",
-        newComment
-      );
-      dispatch({ type: "ADD_COMMENT", payload: res.data });
-    } catch (e) {
-      dispatch({ type: "ADD_COMMENT", payload: newComment });
-    }
-
+    this.props.addComment(newComment);
     this.deselectAll();
     this.setState({
       title: "",
       user: "",
       commentText: "",
+      checkboxes: [],
       errors: {}
     });
-
-    this.props.history.push(`/comments/${movieid}`);
+    this.props.history.push(`/comments/commentspermovie/${movieid}`);
   };
 
   handleCheckboxChange(event) {
@@ -266,121 +262,116 @@ class CommentAdd extends Component {
     const { title, commentText, user, errors } = this.state;
 
     return (
-      <Consumer>
-        {value => {
-          const { dispatch } = value;
+      <div>
+        <header id="main-header" class="py-2 bg-warning text-white">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                <h1>
+                  <i class="far fa-comments"></i> Comment Add
+                </h1>
+              </div>
+            </div>
+          </div>
+        </header>
 
-          return (
-            <div>
-              <header id="main-header" class="py-2 bg-warning text-white">
-                <div class="container">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <h1>
-                        <i class="far fa-comments"></i> Comment Add
-                      </h1>
+        <div class="container">
+          <div class="row">
+            <div class="col">
+              <div class="card">
+                <div class="card-body">
+                  <form onSubmit={this.onSubmit.bind(this)}>
+                    <div class="row">
+                      {this.createGoodCheckboxes()}
+                      {this.createPoorCheckboxes()}
+                      {this.createGenreCheckboxes()}
+
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary mr-2"
+                        onClick={this.selectAll}
+                      >
+                        {" "}
+                        Select All
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary mr-2"
+                        onClick={this.deselectAll}
+                      >
+                        Deselect All
+                      </button>
                     </div>
-                  </div>
-                </div>
-              </header>
+                    <div class="row mt-4"></div>
 
-              <div class="container">
-                <div class="row">
-                  <div class="col">
-                    <div class="card">
-                      <div class="card-body">
-                        <form onSubmit={this.onSubmit.bind(this, dispatch)}>
-                          <div class="row">
-                            {this.createGoodCheckboxes()}
-                            {this.createPoorCheckboxes()}
-                            {this.createGenreCheckboxes()}
-
-                            <button
-                              type="button"
-                              className="btn btn-outline-primary mr-2"
-                              onClick={this.selectAll}
-                            >
-                              {" "}
-                              Select All
-                            </button>
-                            <button
-                              type="button"
-                              className="btn btn-outline-primary mr-2"
-                              onClick={this.deselectAll}
-                            >
-                              Deselect All
-                            </button>
-                          </div>
-                          <div class="row mt-4"></div>
-
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <TextInputGroup
-                                type="text"
-                                name="title"
-                                label="Title"
-                                value={title}
-                                placeHolder="Enter the Title"
-                                onChange={this.onChange}
-                                error={errors.title}
-                              />
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <TextInputGroup
-                                type="text"
-                                name="user"
-                                label="User"
-                                value={user}
-                                placeHolder="Enter the User"
-                                onChange={this.onChange}
-                                error={errors.user}
-                              />
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="col-sm-12">
-                              <TextInputGroup
-                                type="text"
-                                name="commentText"
-                                label="Description"
-                                value={commentText}
-                                placeHolder="Enter a Comment"
-                                onChange={this.onChange}
-                                error={errors.comment_text}
-                              />
-                            </div>
-                          </div>
-                          <section id="actions" class="py-4 mb-4 bg-light">
-                            <div class="container">
-                              <div class="row">
-                                <div class="col-md-3">
-                                  <Link to="/" class="btn btn-light btn-block">
-                                    <i class="fas fa-arrow-left"></i>Back
-                                  </Link>
-                                </div>
-                                <div class="col-md-3">
-                                  <input
-                                    class="btn btn-warning btn-block"
-                                    type="submit"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </section>
-                        </form>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <TextInputGroup
+                          type="text"
+                          name="title"
+                          label="Title"
+                          value={title}
+                          placeHolder="Enter the Title"
+                          onChange={this.onChange}
+                          error={errors.title}
+                        />
                       </div>
                     </div>
-                  </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <TextInputGroup
+                          type="text"
+                          name="user"
+                          label="User"
+                          value={user}
+                          placeHolder="Enter the User"
+                          onChange={this.onChange}
+                          error={errors.user}
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-sm-12">
+                        <TextInputGroup
+                          type="text"
+                          name="commentText"
+                          label="Description"
+                          value={commentText}
+                          placeHolder="Enter a Comment"
+                          onChange={this.onChange}
+                          error={errors.comment_text}
+                        />
+                      </div>
+                    </div>
+                    <section id="actions" class="py-4 mb-4 bg-light">
+                      <div class="container">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <Link to="/" class="btn btn-light btn-block">
+                              <i class="fas fa-arrow-left"></i>Back
+                            </Link>
+                          </div>
+                          <div class="col-md-3">
+                            <input
+                              class="btn btn-warning btn-block"
+                              type="submit"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                  </form>
                 </div>
               </div>
             </div>
-          );
-        }}
-      </Consumer>
+          </div>
+        </div>
+      </div>
     );
   }
 }
 
-export default CommentAdd;
+CommentAdd.propTypes = {
+  addComment: PropTypes.func.isRequired
+};
+export default connect(null, { addComment })(CommentAdd);

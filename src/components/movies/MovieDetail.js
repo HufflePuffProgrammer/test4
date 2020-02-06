@@ -1,131 +1,126 @@
 import React, { Component } from "react";
-import { Consumer } from "../../context";
-import MovieDetailText from "./MovieDetailText";
 import PropTypes from "prop-types";
-import axios from "axios";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { getMovie, deleteMovie } from "../../actions/movieActions";
+import Loading from "../layout/Loading";
 
 class MovieDetail extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      title: "",
-      desc: "",
-      writer: "",
-      director: "",
-      errors: {}
-    };
-  }
+  state = {
+    id: "",
+    title: "",
+    writer: "",
+    director: "",
+    poster: "",
+    desc: ""
+  };
 
-  async componentDidMount() {
+  componentDidMount() {
     const { id } = this.props.match.params;
-    const res = await axios.get(
-      `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
-    );
-
-    const movie = res.data;
-
-    this.setState({
-      movieID: movie.id,
-      title: movie.title,
-      desc: movie.desc,
-      writer: movie.writer,
-      director: movie.director
-    });
+    this.props.getMovie(id);
   }
 
-  onDeleteClick = async (id, dispatch) => {
-    // try {
-    //   await axios.delete(
-    //     `https://my-json-server.typicode.com/hufflepuffprogrammer/test2/movies/${id}`
-    //   );
-    //dispatch({ type: "DELETE_MOVIE", payload: id });
-    // } catch (e) {
-    //   dispatch({ type: "DELETE_MOVIE", payload: id });
-    // }
-    dispatch({ type: "DELETE_MOVIE", payload: id });
+  onDeleteClick = id => {
+    this.props.deleteMovie(id);
     this.props.history.push("/");
   };
   onChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    return (
-      <Consumer>
-        {value => {
-          const { movieID } = this.state;
-          const { movies, dispatch } = value;
-          const moviesPerMovieID = movies.filter(
-            movie => Number(movie.id) === Number(movieID)
-          );
-          return (
-            <div>
-              <header id="main-header" class="py-0 bg-success text-white">
-                <div className="container">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <h1>
-                        <i className="fas fa-film"></i> Movie
-                      </h1>
-                    </div>
-                  </div>
-                </div>
-              </header>
+    const { movie } = this.props;
 
-              <section id="search" class="py-2 mb-6 bg-light">
-                <div className="container">
-                  <div className="row">
-                    <div className="col-md-3">
-                      <Link to="/" class="btn btn-light btn-block">
-                        <i className="fas fa-arrow-left"></i> Back
-                      </Link>
-                    </div>
-                    <div className="col-md-3">
-                      <Link
-                        to={`/movie/edit/${movieID}`}
-                        className="btn btn-warning btn-block"
-                      >
-                        <i className="fas fa-pencil-alt"></i>Edit
-                      </Link>
-                    </div>
-                    <div className="col-md-3">
-                      <Link
-                        to="#"
-                        className="btn btn-danger btn-block"
-                        onClick={this.onDeleteClick.bind(
-                          this,
-                          movieID,
-                          dispatch
-                        )}
-                      >
-                        <i className="far fa-trash-alt"></i>Delete
-                      </Link>
-                    </div>
-                    <div className="col-md-3">
-                      <Link
-                        to={`/movie/add/`}
-                        className="btn btn-success btn-block"
-                      >
-                        <i className="fas fa-plus"></i>Add
-                      </Link>
-                    </div>
-                  </div>
+    if (movie) {
+      const { id, title, director, writer, desc, poster } = this.props.movie;
+      return (
+        <div>
+          <header id="main-header" class="py-0 bg-success text-white">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-6">
+                  <h1>
+                    <i className="fas fa-film"></i> Movie
+                  </h1>
                 </div>
-              </section>
-              <section id="movie">
-                <table className="table">
-                  {moviesPerMovieID.map(movie => (
-                    <MovieDetailText key={movie.id} movie={movie} />
-                  ))}
-                </table>
-              </section>
+              </div>
             </div>
-          );
-        }}
-      </Consumer>
-    );
+          </header>
+
+          <section id="search" class="py-2 mb-6 bg-light">
+            <div className="container">
+              <div className="row">
+                <div className="col-md-3">
+                  <Link to="/" class="btn btn-light btn-block">
+                    <i className="fas fa-arrow-left"></i> Back
+                  </Link>
+                </div>
+                <div className="col-md-3">
+                  <Link
+                    to={`/movie/edit/${id}`}
+                    className="btn btn-warning btn-block"
+                  >
+                    <i className="fas fa-pencil-alt"></i>Edit
+                  </Link>
+                </div>
+                <div className="col-md-3">
+                  <Link
+                    to="#"
+                    className="btn btn-danger btn-block"
+                    onClick={this.onDeleteClick.bind(this, id)}
+                  >
+                    <i className="far fa-trash-alt"></i>Delete
+                  </Link>
+                </div>
+                <div className="col-md-3">
+                  <Link
+                    to={`/movie/add/`}
+                    className="btn btn-success btn-block"
+                  >
+                    <i className="fas fa-plus"></i>Add
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="movie">
+            <table className="table">
+              <tbody>
+                <tr>
+                  <td width="20%">
+                    <img src={poster} alt={title} class="img-thumbnail"></img>
+                  </td>
+                  <td width="80%">
+                    <div class="row">
+                      <h4>{title}</h4>
+                    </div>
+                    <div class="row">
+                      <strong>Dir: </strong> {director}
+                    </div>
+                    <div class="row">
+                      <strong>Writer: </strong> {writer}
+                    </div>
+                    <div class="row">
+                      <strong>Summary: </strong> {desc}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      );
+    } else {
+      return <Loading />;
+    }
   }
 }
+
 MovieDetail.propTypes = {
-  id: PropTypes.number.isRequired
+  movie: PropTypes.object.isRequired,
+  getMovie: PropTypes.func.isRequired,
+  deleteMovie: PropTypes.func.isRequired
 };
-export default MovieDetail;
+const mapStateToProps = state => ({
+  movie: state.movie.movie
+});
+
+export default connect(mapStateToProps, { getMovie, deleteMovie })(MovieDetail);
