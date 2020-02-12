@@ -19,7 +19,7 @@
         "dialogue_poor": true,
         "premise_poor": false
       },
-      "comment_text": "The Nightengale 1",
+      "comment_text": "The Nightingale",
       "title": "Edge of My Seat Thriller",
       "user": "She-Ra"
     },
@@ -42,7 +42,7 @@
         "dialogue_poor": true,
         "premise_poor": true
       },
-      "comment_text": "Nightengale 2 Horror movie of the decade",
+      "comment_text": "Nightingale. Horror movie of the decade",
       "title": "What a directorial triumphant",
       "user": "Edward Norton"
     },
@@ -65,7 +65,7 @@
         "dialogue_poor": true,
         "premise_poor": true
       },
-      "comment_text": "First Rule of Nightengale is don't go out by yourself",
+      "comment_text": "First Rule of Nightingale is don't go out by yourself",
       "title": "Can't sleep at night",
       "user": "Tyler Durden"
     },
@@ -166,7 +166,7 @@
   "movies": [
     {
       "id": 1,
-      "title": "The Nightengale",
+      "title": "The Nightingale",
       "desc": "Set in 1825, Clare, a young Irish convict woman, chases a British officer through the rugged Tasmanian wilderness, bent on revenge for a terrible act of violence he committed against her family. On the way she enlists the services of an Aboriginal tracker named Billy, who is also marked by trauma from his own violence-filled past.",
       "writer": "Jennifer Kent",
       "director": "Jennifer Kent",

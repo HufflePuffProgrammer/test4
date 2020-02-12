@@ -10,19 +10,9 @@ import PropTypes from "prop-types";
 class CommentAdd extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      title: "",
-      user: "",
-      commentText: "",
-      checkboxes: [],
-      movieid: this.props.match.params,
-      errors: {}
-    };
-    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
-  }
-  componentDidMount() {
-    let listCheckboxes = [];
+    const { id } = this.props.match.params;
+    //initialize the checkboxes with keys value to false;
+    var listCheckboxes = [];
     listCheckboxes["opening_poor"] = false;
     listCheckboxes["premise_poor"] = false;
     listCheckboxes["character_poor"] = false;
@@ -33,29 +23,26 @@ class CommentAdd extends Component {
     listCheckboxes["character_good"] = false;
     listCheckboxes["dialogue_good"] = false;
 
-    listCheckboxes["superhero"] = false;
     listCheckboxes["dude_with_a_problem"] = false;
     listCheckboxes["golden_fleece"] = false;
     listCheckboxes["buddy_love"] = false;
     listCheckboxes["institutionalized"] = false;
-    const { id } = this.props.match.params;
+    listCheckboxes["superhero"] = false;
 
-    this.setState({
+    this.state = {
       title: "",
       user: "",
+      commentText: "",
       checkboxes: listCheckboxes,
       movieid: id,
-      commentText: ""
-      //isSelectedBox: false
-    });
+      errors: {}
+    };
+    this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
   }
+
   onSubmit = async e => {
     e.preventDefault();
     const { commentText, checkboxes, movieid, user, title } = this.state;
-    console.log("commentText");
-    console.log(commentText);
-    console.log("checkboxes");
-    console.log(checkboxes);
     //Check for Errors
     if (title === "") {
       this.setState({ errors: { title: "Title is required" } });
@@ -77,21 +64,6 @@ class CommentAdd extends Component {
       title,
       user,
       checkboxes
-      // opening_poor: checkboxes["opening_poor"],
-      // premise_poor: checkboxes["premise_poor"],
-      // character_poor: checkboxes["character_poor"],
-      // dialogue_poor: checkboxes["dialogue_poor"],
-
-      // opening_good: checkboxes["opening_good"],
-      // premise_good: checkboxes["premise_good"],
-      // character_good: checkboxes["character_good"],
-      // dialogue_good: checkboxes["dialogue_good"],
-
-      // dude_with_a_problem: checkboxes["dude_with_a_problem"],
-      // golden_fleece: checkboxes["golden_fleece"],
-      // buddy_love: checkboxes["buddy_love"],
-      // institutionalized: checkboxes["institutionalized"],
-      // superhero: checkboxes["superhero"]
     };
 
     this.props.addComment(newComment);
@@ -99,6 +71,7 @@ class CommentAdd extends Component {
     this.setState({
       title: "",
       user: "",
+      movieid,
       commentText: "",
       checkboxes: [],
       errors: {}

@@ -72,10 +72,10 @@ class MovieDetail extends Component {
                 </div>
                 <div className="col-md-3">
                   <Link
-                    to={`/movie/add/`}
+                    to={`/comments/add/${id}`}
                     className="btn btn-success btn-block"
                   >
-                    <i className="fas fa-plus"></i>Add
+                    <i className="fas fa-plus"></i>Add Comment
                   </Link>
                 </div>
               </div>

@@ -8,7 +8,7 @@ import {
 } from "../actions/types";
 
 const initialState = {
-  comments: {},
+  comments: [],
   comment: {}
 };
 
@@ -40,6 +40,11 @@ export default function(state = initialState, action) {
         )
       };
     case ADD_COMMENT:
+      if (state.comments === null) {
+        state.comments = [];
+      }
+      console.log("state)");
+      console.log(state);
       return { ...state, comments: [action.payload, ...state.comments] };
 
     case GET_COMMENT:

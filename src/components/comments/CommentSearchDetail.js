@@ -11,7 +11,7 @@ class CommentSearchDetail extends Component {
       fool_triumphant,
       buddy_love,
       institutionalized
-    } = commentText.checkboxes;
+    } = commentText;
     let genreString = "";
 
     if (superhero) {
@@ -44,7 +44,7 @@ class CommentSearchDetail extends Component {
       character_good,
       dialogue_good,
       premise_good
-    } = commentText.checkboxes;
+    } = commentText;
     let charsGoodString = "";
 
     if (opening_good) {
@@ -71,7 +71,7 @@ class CommentSearchDetail extends Component {
       character_poor,
       dialogue_poor,
       premise_poor
-    } = commentText.checkboxes;
+    } = commentText;
     let charsPoorString = "";
 
     if (opening_poor) {
@@ -100,7 +100,7 @@ class CommentSearchDetail extends Component {
 
   render() {
     const { comment, movieid } = this.props;
-    const { title } = comment;
+    const { title, checkboxes } = comment;
 
     return (
       <tbody>
@@ -114,20 +114,20 @@ class CommentSearchDetail extends Component {
             <div className="row">
               <div className="col">
                 <small className="text-muted">Genre: </small>
-                {this.commentGenreText(comment)}
+                {this.commentGenreText(checkboxes)}
               </div>
             </div>
 
             <div className="row">
               <div className="col">
                 <small className="mr-1 text-muted">Good:</small>{" "}
-                {this.commentCharsGoodText(comment)}{" "}
+                {this.commentCharsGoodText(checkboxes)}{" "}
               </div>
             </div>
             <div className="row">
               <div className="col">
                 <small className="mr-1 text-muted">Poor:</small>{" "}
-                {this.commentCharsPoorText(comment)}
+                {this.commentCharsPoorText(checkboxes)}
               </div>
             </div>
             <div className="row">
