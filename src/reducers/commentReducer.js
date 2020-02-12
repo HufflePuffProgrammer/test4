@@ -43,8 +43,6 @@ export default function(state = initialState, action) {
       if (state.comments === null) {
         state.comments = [];
       }
-      console.log("state)");
-      console.log(state);
       return { ...state, comments: [action.payload, ...state.comments] };
 
     case GET_COMMENT:

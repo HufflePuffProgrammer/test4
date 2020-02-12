@@ -12,9 +12,6 @@ import MovieDetail from "./components/movies/MovieDetail";
 import CommentsPerMovie from "./components/comments/CommentsPerMovie";
 import CommentAdd from "./components/comments/CommentAdd";
 import CommentEdit from "./components/comments/CommentEdit";
-import Contacts from "./components/contacts/Contacts";
-import ContactEdit from "./components/contacts/ContactEdit";
-
 import Header from "./components/layout/Header";
 import About from "./components/pages/About";
 
@@ -37,8 +34,6 @@ class App extends Component {
             <Header branding="Screenplay Salon" />
             <div className="container">
               <Switch>
-                <Route exact path="/contacts" component={Contacts} />
-                <Route exact path="/contact/edit/:id" component={ContactEdit} />
                 <Route exact path="/" component={Movies} />
                 <Route exact path="/search" component={Search} />
                 <Route exact path="/movie/detail/:id" component={MovieDetail} />
